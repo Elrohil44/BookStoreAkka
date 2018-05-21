@@ -1,16 +1,15 @@
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.actor.Props;
-import requests.RequestHandler;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-public class BookStore {
-    public static void main (String[] args) throws IOException {
-        final ActorSystem system = ActorSystem.create("book_store");
-        system.actorOf(Props.create(RequestHandler.class), "store");
+public class Client {
+    public static void main(String[] args) throws IOException {
+        final ActorSystem system = ActorSystem.create("client");
+        final ActorRef test = system.actorOf(Props.create(Requester.class), "requester");
 
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         while (true) {
@@ -18,6 +17,7 @@ public class BookStore {
             if (line.equals("q")) {
                 break;
             }
+            test.tell(line, ActorRef.noSender());
         }
 
         system.terminate();

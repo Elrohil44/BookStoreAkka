@@ -1,0 +1,30 @@
+syntax = 'proto3';
+
+package messaging;
+
+option java_package = "bookstore.messaging";
+
+enum RequestType {
+    FIND_BOOK = 0;
+    ORDER_BOOK = 1;
+    STREAM_BOOK = 2;
+}
+
+message Request {
+    RequestType requestType = 1;
+    string bookTitle = 2;
+}
+
+enum ResponseStatus {
+    OK = 0;
+    NOT_FOUND = 1;
+    ERROR = 2;
+    EOF = 3;
+}
+
+message Response {
+    ResponseStatus responseStatus = 1;
+    string bookTitle = 2;
+    string line = 3;
+    float price = 4;
+}
