@@ -1,11 +1,14 @@
 import akka.actor.AbstractActor;
+import akka.actor.OneForOneStrategy;
 import akka.actor.Props;
-import akka.event.Logging;
-import akka.event.LoggingAdapter;
-
+import akka.actor.SupervisorStrategy;
+import akka.japi.pf.DeciderBuilder;
 import bookstore.messaging.BankStoreAkka.Request;
-import bookstore.messaging.BankStoreAkka.Response;
 import bookstore.messaging.BankStoreAkka.RequestType;
+import bookstore.messaging.BankStoreAkka.Response;
+import scala.concurrent.duration.Duration;
+
+import static akka.actor.SupervisorStrategy.stop;
 
 public class Requester extends AbstractActor {
 
@@ -68,5 +71,14 @@ public class Requester extends AbstractActor {
                 .matchAny(System.out::println)
                 .build();
 
+    }
+    private static SupervisorStrategy strategy
+            = new OneForOneStrategy(10, Duration.create("1 minute"), DeciderBuilder.
+            matchAny(o -> stop()).
+            build());
+
+    @Override
+    public SupervisorStrategy supervisorStrategy() {
+        return strategy;
     }
 }

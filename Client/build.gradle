@@ -4,16 +4,29 @@ buildscript {
     }
     dependencies {
         classpath 'com.google.protobuf:protobuf-gradle-plugin:0.8.5'
+        classpath "com.github.jengelman.gradle.plugins:shadow:2.0.4"
     }
 }
 
 plugins {
     id "com.google.protobuf" version "0.8.5"
     id "java"
+    id "application"
+    id "com.github.johnrengelman.shadow" version "2.0.4"
 }
 
+mainClassName = 'Client'
 group 'BookStore'
 version '1.0-SNAPSHOT'
+
+jar {
+    manifest {
+        attributes 'Main-Class': "Client"
+    }
+    from {
+        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
 
 sourceCompatibility = 1.8
 
@@ -45,4 +58,13 @@ sourceSets {
 
 protobuf {
     generatedFilesBaseDir = "$projectDir/src/generated"
+}
+
+shadowJar {
+    baseName = 'client'
+    classifier = null
+    version = null
+    transform(com.github.jengelman.gradle.plugins.shadow.transformers.AppendingTransformer) {
+        resource = 'reference.conf'
+    }
 }
